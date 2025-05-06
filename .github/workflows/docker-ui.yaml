@@ -53,8 +53,6 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '21'
-          cache: 'pnpm'
-        working-directory: gpustack-ui
 
       - name: Deps
         run: scripts/deps
