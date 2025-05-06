@@ -14,9 +14,6 @@ jobs:
       actions: read
       id-token: write
     runs-on: ubuntu-22.04
-    env:
-      DOCKER_BUILDKIT: 1
-      BUILDKIT_INLINE_CACHE: 1
     strategy:
       fail-fast: false
       matrix:
