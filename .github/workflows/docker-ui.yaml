@@ -1,0 +1,125 @@
+name: Docker Build and Publish
+
+on:
+  workflow_dispatch:
+
+env:
+  REGISTRY: registry.cn-chengdu.aliyuncs.com
+  IMAGE_NAME: tavan-ai/gpustack
+
+jobs:
+  publish-docker:
+    permissions:
+      contents: write
+      actions: read
+      id-token: write
+    runs-on: ubuntu-22.04
+    env:
+      DOCKER_BUILDKIT: 1
+      BUILDKIT_INLINE_CACHE: 1
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - device: cuda
+            dockerfile: "Dockerfile"
+            platforms: "linux/amd64,linux/arm64"
+            tag_suffix: ""
+            build_args: "CUDA_VERSION=12.4.1"
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+          persist-credentials: false
+
+      - name: Checkout gpustack-ui repo
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ github.repository_owner }}/gpustack-ui
+          ref: feat/custom_demo
+          path: gpustack-ui
+          fetch-depth: 1
+          persist-credentials: false
+          token: ${{ secrets.GPUSTACK_UI_TOKEN }}
+
+      - name: Setup Pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9.3.0
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '21'
+          cache: 'pnpm'
+
+      - name: Deps
+        run: scripts/deps
+        working-directory: gpustack-ui
+        env:
+          LOCK: true
+
+      - name: Build gpustack-ui
+        run: scripts/build
+        working-directory: gpustack-ui
+
+      - name: Copy built UI to gpustack/ui
+        run: |
+          rm -rf gpustack/ui
+          mkdir -p gpustack/ui
+          cp -r gpustack-ui/dist/* gpustack/ui/
+
+      - name: Maximize Docker Build Space
+        uses: gpustack/.github/.github/actions/maximize-docker-build-space@main
+        with:
+          deep-clean: true
+          root-reserve-mb: 20480
+
+      - name: Setup QEMU
+        uses: docker/setup-qemu-action@v3
+        with:
+          image: tonistiigi/binfmt:qemu-v9.2.2
+          platforms: "arm64"
+
+      - name: Setup Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to ACR
+        uses: aliyun/acr-login@v1
+        with:
+          login-server: https://registry.cn-chengdu.aliyuncs.com
+          username: '${{ secrets.USERNAME }}'
+          password: '${{ secrets.PASSWORD }}'
+
+      - name: Get Metadata
+        id: metadata
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          tags: |
+            type=ref,event=branch
+            type=ref,event=pr
+            type=pep440,pattern={{raw}}
+            type=pep440,pattern=v{{major}}.{{minor}},enable=${{ startsWith(github.ref, 'refs/tags/') }}
+            type=raw,value=latest,enable=${{ startsWith(github.ref, 'refs/tags/') }}
+          flavor: |
+            latest=false
+            suffix=${{ matrix.tag_suffix }}
+
+      - name: Package
+        uses: docker/build-push-action@v5
+        id: package
+        with:
+          push: true
+          file: ${{ github.workspace }}/${{ matrix.dockerfile }}
+          context: ${{ github.workspace }}
+          platforms: ${{ matrix.platforms }}
+          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{github.run_number}}
+          labels: ${{ steps.metadata.outputs.labels }}
+          provenance: true
+          sbom: true
+          build-args: ${{ matrix.build_args }}
+          cache-from: type=registry,ref=gpustack/build-cache:gpustack${{ matrix.tag_suffix }}
+          cache-to: type=registry,mode=max,oci-mediatypes=false,compression=gzip,ref=gpustack/build-cache:gpustack${{ matrix.tag_suffix }},ignore-error=true
