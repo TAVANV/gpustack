@@ -120,5 +120,3 @@ jobs:
           provenance: true
           sbom: true
           build-args: ${{ matrix.build_args }}
-          cache-from: type=registry,ref=gpustack/build-cache:gpustack${{ matrix.tag_suffix }}
-          cache-to: type=registry,mode=max,oci-mediatypes=false,compression=gzip,ref=gpustack/build-cache:gpustack${{ matrix.tag_suffix }},ignore-error=true
