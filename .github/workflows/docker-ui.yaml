@@ -70,11 +70,11 @@ jobs:
           mkdir -p gpustack/ui
           cp -r gpustack-ui/dist/* gpustack/ui/
 
-      - name: Maximize Docker Build Space
-        uses: gpustack/.github/.github/actions/maximize-docker-build-space@main
-        with:
-          deep-clean: true
-          root-reserve-mb: 20480
+      # - name: Maximize Docker Build Space
+      #   uses: gpustack/.github/.github/actions/maximize-docker-build-space@main
+      #   with:
+      #     deep-clean: true
+      #     root-reserve-mb: 20480
 
       - name: Setup QEMU
         uses: docker/setup-qemu-action@v3
@@ -107,7 +107,7 @@ jobs:
             latest=false
             suffix=${{ matrix.tag_suffix }}
 
-      - name: Package
+      - name: Build and Push
         uses: docker/build-push-action@v5
         id: package
         with:
@@ -120,5 +120,3 @@ jobs:
           provenance: true
           sbom: true
           build-args: ${{ matrix.build_args }}
-          cache-from: type=registry,ref=gpustack/build-cache:gpustack${{ matrix.tag_suffix }}
-          cache-to: type=registry,mode=max,oci-mediatypes=false,compression=gzip,ref=gpustack/build-cache:gpustack${{ matrix.tag_suffix }},ignore-error=true
