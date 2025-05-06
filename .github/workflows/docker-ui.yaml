@@ -117,6 +117,4 @@ jobs:
           platforms: ${{ matrix.platforms }}
           tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{github.run_number}}
           labels: ${{ steps.metadata.outputs.labels }}
-          provenance: true
-          sbom: true
           build-args: ${{ matrix.build_args }}
