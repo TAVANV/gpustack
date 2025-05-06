@@ -2,17 +2,17 @@ name: CI
 
 on:
   workflow_dispatch:
-  push:
-    branches: [main]
-    tags: ["*.*.*"]
-    paths-ignore:
-      - "mkdocs.yml"
-      - "docs/**"
-      - "**.md"
-      - "**.mdx"
-      - "**.png"
-      - "**.jpg"
-      - "**.gif"
+  # push:
+  #   branches: [main]
+  #   tags: ["*.*.*"]
+  #   paths-ignore:
+  #     - "mkdocs.yml"
+  #     - "docs/**"
+  #     - "**.md"
+  #     - "**.mdx"
+  #     - "**.png"
+  #     - "**.jpg"
+  #     - "**.gif"
 
 jobs:
   linux-macos:
