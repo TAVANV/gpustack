@@ -107,7 +107,7 @@ jobs:
             latest=false
             suffix=${{ matrix.tag_suffix }}
 
-      - name: Package
+      - name: Build and Push
         uses: docker/build-push-action@v5
         id: package
         with:
