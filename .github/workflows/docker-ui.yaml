@@ -14,16 +14,13 @@ jobs:
       actions: read
       id-token: write
     runs-on: ubuntu-22.04
-    env:
-      DOCKER_BUILDKIT: 1
-      BUILDKIT_INLINE_CACHE: 1
     strategy:
       fail-fast: false
       matrix:
         include:
           - device: cuda
             dockerfile: "Dockerfile"
-            platforms: "linux/amd64,linux/arm64"
+            platforms: "linux/amd64"
             tag_suffix: ""
             build_args: "CUDA_VERSION=12.4.1"
 
@@ -53,7 +50,6 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '21'
-          cache: 'pnpm'
 
       - name: Deps
         run: scripts/deps
@@ -108,7 +104,7 @@ jobs:
             latest=false
             suffix=${{ matrix.tag_suffix }}
 
-      - name: Package
+      - name: Build and Push
         uses: docker/build-push-action@v5
         id: package
         with:
@@ -118,8 +114,8 @@ jobs:
           platforms: ${{ matrix.platforms }}
           tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{github.run_number}}
           labels: ${{ steps.metadata.outputs.labels }}
-          provenance: true
-          sbom: true
+          # provenance: true
+          # sbom: true
           build-args: ${{ matrix.build_args }}
-          cache-from: type=registry,ref=gpustack/build-cache:gpustack${{ matrix.tag_suffix }}
-          cache-to: type=registry,mode=max,oci-mediatypes=false,compression=gzip,ref=gpustack/build-cache:gpustack${{ matrix.tag_suffix }},ignore-error=true
+          # cache-from: type=registry,ref=gpustack/build-cache:gpustack${{ matrix.tag_suffix }}
+          # cache-to: type=registry,mode=max,oci-mediatypes=false,compression=gzip,ref=gpustack/build-cache:gpustack${{ matrix.tag_suffix }},ignore-error=true
