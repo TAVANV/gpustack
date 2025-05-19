@@ -1,18 +1,17 @@
 name: PR Checking
 
 on:
-  pull_request:
-    branches:
-      - main
-      - "v*-dev"
-    paths-ignore:
-      - "mkdocs.yml"
-      - "docs/**"
-      - "**.md"
-      - "**.mdx"
-      - "**.png"
-      - "**.jpg"
-      - "**.gif"
+  workflow_dispatch:
+  # pull_request:
+  #   branches: [main]
+  #   paths-ignore:
+  #     - "mkdocs.yml"
+  #     - "docs/**"
+  #     - "**.md"
+  #     - "**.mdx"
+  #     - "**.png"
+  #     - "**.jpg"
+  #     - "**.gif"
 
 jobs:
   linux-macos:
