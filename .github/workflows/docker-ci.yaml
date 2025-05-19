@@ -2,27 +2,27 @@ name: Docker CI
 
 on:
   workflow_dispatch:
-  push:
-    branches: [main]
-    tags: ["*.*.*"]
-    paths-ignore:
-      - "mkdocs.yml"
-      - "docs/**"
-      - "**.md"
-      - "**.mdx"
-      - "**.png"
-      - "**.jpg"
-      - "**.gif"
-      - "Dockerfile.rocm.base"
-      - "Dockerfile.dcu.base"
-  pull_request:
-    branches: [main]
-    paths:
-      - "Dockerfile"
-      - "Dockerfile.*"
-      - ".github/workflows/docker-ci.yaml"
-      - "!Dockerfile.rocm.base"
-      - "!Dockerfile.dcu.base"
+  # push:
+  #   branches: [main]
+  #   tags: ["*.*.*"]
+  #   paths-ignore:
+  #     - "mkdocs.yml"
+  #     - "docs/**"
+  #     - "**.md"
+  #     - "**.mdx"
+  #     - "**.png"
+  #     - "**.jpg"
+  #     - "**.gif"
+  #     - "Dockerfile.rocm.base"
+  #     - "Dockerfile.dcu.base"
+  # pull_request:
+  #   branches: [main]
+  #   paths:
+  #     - "Dockerfile"
+  #     - "Dockerfile.*"
+  #     - ".github/workflows/docker-ci.yaml"
+  #     - "!Dockerfile.rocm.base"
+  #     - "!Dockerfile.dcu.base"
 
 jobs:
   publish-docker:
