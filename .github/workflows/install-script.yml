@@ -1,23 +1,21 @@
 name: Linux and MaxOS Install Script Testing
 
 on:
-  push:
-    branches:
-      - main
-      - "v*-dev"
-    paths:
-      - "install.sh"
-      - ".github/workflows/install-script.yml"
-  pull_request:
-    branches:
-      - main
-      - "v*-dev"
-    paths:
-      - "install.sh"
-      - ".github/workflows/install-script.yml"
+  # push:
+  #   branches:
+  #     - main
+  #   paths:
+  #     - "install.sh"
+  #     - ".github/workflows/install-script.yml"
+  # pull_request:
+  #   branches:
+  #     - main
+  #   paths:
+  #     - "install.sh"
+  #     - ".github/workflows/install-script.yml"
   workflow_dispatch: {}
-  schedule:
-    - cron: "0 0 * * *" # every day at 00:00 UTC
+  # schedule:
+  #   - cron: "0 0 * * *" # every day at 00:00 UTC
 jobs:
   linux-macos-build:
     timeout-minutes: 20
