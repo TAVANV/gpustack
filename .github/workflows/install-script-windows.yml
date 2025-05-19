@@ -1,23 +1,21 @@
 name: Windows Install Script Testing
 
 on:
-  push:
-    branches:
-      - main
-      - "v*-dev"
-    paths:
-      - "install.ps1"
-      - ".github/workflows/install-script-windows.yml"
-  pull_request:
-    branches:
-      - main
-      - "v*-dev"
-    paths:
-      - "install.ps1"
-      - ".github/workflows/install-script-windows.yml"
+  # push:
+  #   branches:
+  #     - main
+  #   paths:
+  #     - "install.ps1"
+  #     - ".github/workflows/install-script-windows.yml"
+  # pull_request:
+  #   branches:
+  #     - main
+  #   paths:
+  #     - "install.ps1"
+  #     - ".github/workflows/install-script-windows.yml"
   workflow_dispatch: {}
-  schedule:
-    - cron: "0 0 * * *" # every day at 00:00 UTC
+  # schedule:
+  #   - cron: "0 0 * * *" # every day at 00:00 UTC
 
 jobs:
   windows-amd64-build:
@@ -73,9 +71,10 @@ jobs:
         run: |
           $env:whlPackageName=Get-ChildItem -Path dist -Filter "*.whl" -File | ForEach-Object { $_.Name }
           Write-Host "whlPackageName: $env:whlPackageName"
-          $env:INSTALL_PACKAGE_SPEC = [System.IO.Path]::Combine("dist", $env:whlPackageName)   
-          Write-Host "INSTALL_PACKAGE_SPEC: $env:INSTALL_PACKAGE_SPEC"   
+          $env:INSTALL_PACKAGE_SPEC = [System.IO.Path]::Combine("dist", $env:whlPackageName)
+          Write-Host "INSTALL_PACKAGE_SPEC: $env:INSTALL_PACKAGE_SPEC"
           Write-Host "AppData $env:APPDATA"
+
 
           # Use port 8080 since 80 is occupied by the System
           ./install.ps1 -ServerPort 8080
@@ -103,6 +102,8 @@ jobs:
               }
           }
 
+
           if ($responseCode -ne 200) {
               Write-Host "All retry attempts failed. Last error: $lastError"
           }
+

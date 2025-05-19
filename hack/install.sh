@@ -68,6 +68,6 @@ function copy_extra_static() {
 
 gpustack::log::info "+++ DEPENDENCIES +++"
 download_deps
-download_ui
+# download_ui
 copy_extra_static
 gpustack::log::info "--- DEPENDENCIES ---"
