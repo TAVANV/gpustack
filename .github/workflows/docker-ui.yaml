@@ -19,7 +19,7 @@ jobs:
       matrix:
         include:
           - device: cuda
-            dockerfile: "Dockerfile"
+            dockerfile: "pack/Dockerfile"
             platforms: "linux/amd64"
             tag_suffix: ""
             build_args: "CUDA_VERSION=12.4.1"
